@@ -5,7 +5,7 @@ env/
 
 # Ignore local user uploads and database instances
 uploads/*
-instance/*
+
 
 # Ignore python cache files
 __pycache__/
