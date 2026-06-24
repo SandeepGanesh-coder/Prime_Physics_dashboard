@@ -1,0 +1,12 @@
+# Ignore local virtual environments
+venv/
+.venv/
+env/
+
+# Ignore local user uploads and database instances
+uploads/*
+instance/*
+
+# Ignore python cache files
+__pycache__/
+*.pyc

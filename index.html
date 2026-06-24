@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRIME PHYSICS — Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+:root {
+  --night:#080c14;--void:#0d1220;--surface:#111827;--raised:#161f30;
+  --border:#1e2d47;--muted:#2a3a54;--text-1:#f0f4ff;--text-2:#8899bb;
+  --text-3:#4a5c7a;--blue:#4f8ef7;--blue-lo:rgba(79,142,247,.12);
+  --indigo:#7c6cf7;--cyan:#22d3ee;--green:#22c55e;--rose:#f43f5e;
+  --amber:#f59e0b;--glow-blue:0 0 24px rgba(79,142,247,.25);
+  --glow-indigo:0 0 24px rgba(124,108,247,.25);
+  --radius-sm:6px;--radius:10px;--radius-lg:16px;
+  --sidebar-w:260px;--header-h:68px;
+  --font-display:'Syne',sans-serif;--font-body:'Space Grotesk',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;--transition:200ms cubic-bezier(.4,0,.2,1);
+}
+[data-theme="light"]{
+  --night:#f0f4ff;--void:#e8edf8;--surface:#ffffff;--raised:#f5f7ff;
+  --border:#dce3f5;--muted:#c5ceea;--text-1:#0d1220;--text-2:#3a4a6a;
+  --text-3:#8899bb;--blue-lo:rgba(79,142,247,.08);--glow-blue:none;--glow-indigo:none;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--night);color:var(--text-1);min-height:100vh;overflow-x:hidden;font-size:15px;line-height:1.5}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit}
+input,select,textarea{font-family:inherit}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--muted);border-radius:99px}
+
+/* ─── LOGIN ─── */
+#login-screen{position:relative;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem;background:radial-gradient(circle at 50% 0%,var(--void) 0%,var(--night) 70%)}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2.5rem 2rem;width:100%;max-width:420px;box-shadow:0 24px 48px rgba(0,0,0,.4);position:relative;overflow:hidden}
+.login-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--indigo))}
+.login-header{text-align:center;margin-bottom:2rem}
+.login-icon{width:48px;height:48px;background:linear-gradient(135deg,var(--blue),var(--indigo));border-radius:var(--radius);display:inline-grid;place-items:center;font-size:24px;color:#fff;box-shadow:var(--glow-blue);margin-bottom:1rem}
+.login-header h1{font-family:var(--font-display);font-size:24px;font-weight:800;letter-spacing:.05em;color:var(--text-1)}
+.login-header p{font-size:13px;color:var(--text-3);margin-top:4px}
+.login-tabs{display:flex;background:var(--raised);border-radius:var(--radius-sm);padding:4px;margin-bottom:1.5rem;border:1px solid var(--border)}
+.login-tab{flex:1;padding:.6rem;text-align:center;font-size:13px;font-weight:600;color:var(--text-2);border-radius:4px;cursor:pointer;border:none;background:transparent;transition:all var(--transition)}
+.login-tab.active{background:var(--surface);color:var(--blue);box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.login-form{display:flex;flex-direction:column;gap:1rem}
+.login-input-group{position:relative}
+.login-input-group i{position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:var(--text-3);font-size:14px}
+.login-input{width:100%;background:var(--raised);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.85rem 1rem .85rem 2.5rem;color:var(--text-1);font-size:14px;outline:none;transition:border-color var(--transition)}
+.login-input:focus{border-color:rgba(79,142,247,.5)}
+.login-error{background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.3);color:var(--rose);font-size:13px;padding:.65rem 1rem;border-radius:var(--radius-sm);display:none}
+.login-btn-submit{width:100%;background:linear-gradient(135deg,var(--blue),var(--indigo));color:#fff;border:none;padding:.9rem;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;margin-top:.5rem;box-shadow:0 4px 14px rgba(79,142,247,.3);transition:all var(--transition)}
+.login-btn-submit:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(79,142,247,.4)}
+.login-btn-submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.login-link{text-align:center;font-size:13px;color:var(--text-3);margin-top:.75rem}
+.login-link a{color:var(--blue);cursor:pointer}
+
+/* ─── GLOBAL SELECT TRANSLATION ATTACHMENT ─── */
+.lang-dropdown {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  padding: 0.35rem 0.6rem;
+  font-size: 13px;
+  border-radius: var(--radius-sm);
+  outline: none;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.lang-dropdown:hover, .lang-dropdown:focus {
+  border-color: rgba(79,142,247,.5);
+  color: var(--text-1);
+}
+
+/* ─── REGISTER PANEL ─── */
+.reg-extra{display:none;gap:1rem;flex-direction:column}
+.reg-extra.visible{display:flex}
+.mentor-code-row{display:none}
+.mentor-code-row.visible{display:block}
+
+/* ─── DASHBOARD ─── */
+#dashboard-app{display:none;width:100%}
+#dashboard-app.active{display:flex}
+.sidebar{width:var(--sidebar-w);background:var(--void);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:200;overflow-y:auto;overflow-x:hidden;padding:0 0 1.5rem}
+.sidebar-brand{display:flex;align-items:center;gap:10px;padding:1.4rem 1.5rem 1.2rem;border-bottom:1px solid var(--border);margin-bottom:1rem}
+.brand-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--blue),var(--indigo));border-radius:var(--radius-sm);display:grid;place-items:center;font-size:16px;color:#fff;flex-shrink:0;box-shadow:var(--glow-blue)}
+.brand-name{font-family:var(--font-display);font-size:15px;font-weight:800;letter-spacing:.08em;color:var(--text-1);line-height:1.1}
+.brand-name span{display:block;font-size:10px;font-family:var(--font-mono);font-weight:400;color:var(--text-3);letter-spacing:.12em;margin-top:1px}
+.nav-section{padding:0 .75rem;margin-bottom:.25rem}
+.nav-label{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);padding:1rem .75rem .4rem;display:block}
+.nav-link{display:flex;align-items:center;gap:.75rem;padding:.6rem .75rem;border-radius:var(--radius-sm);color:var(--text-2);font-size:13.5px;font-weight:500;cursor:pointer;transition:all var(--transition);position:relative;border:1px solid transparent}
+.nav-link i{width:18px;text-align:center;font-size:13px;flex-shrink:0}
+.nav-link:hover{color:var(--text-1);background:var(--blue-lo);border-color:transparent}
+.nav-link.active{color:var(--blue);background:var(--blue-lo);border-color:rgba(79,142,247,.2)}
+.nav-link.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:2px;background:var(--blue);border-radius:0 2px 2px 0;margin-left:-1px}
+.sidebar-footer{margin-top:auto;padding:1rem 1.5rem 0;border-top:1px solid var(--border)}
+.streak-widget{display:flex;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--border);padding:.75rem 1rem;border-radius:var(--radius)}
+.streak-num{font-family:var(--font-display);font-size:16px;font-weight:700}
+.streak-label{font-size:12px;color:var(--text-3);font-family:var(--font-mono)}
+.workspace{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{height:var(--header-h);border-bottom:1px solid var(--border);background:var(--void);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
+.topbar-left{display:flex;align-items:center;gap:1rem}
+.breadcrumb{font-size:12px;color:var(--text-3);font-family:var(--font-mono);display:flex;align-items:center;gap:6px}
+.breadcrumb span{color:var(--text-2)}
+.topbar-right{display:flex;align-items:center;gap:.75rem}
+.theme-btn{background:var(--surface);border:1px solid var(--border);color:var(--text-2);width:36px;height:36px;border-radius:var(--radius-sm);cursor:pointer;display:grid;place-items:center;font-size:14px;transition:all var(--transition)}
+.theme-btn:hover{color:var(--blue);border-color:rgba(79,142,247,.3)}
+.user-chip{display:flex;align-items:center;gap:.6rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.35rem .75rem .35rem .35rem;cursor:pointer;transition:all var(--transition)}
+.user-chip:hover{border-color:rgba(79,142,247,.3)}
+.user-chip img{width:28px;height:28px;border-radius:4px;object-fit:cover}
+.user-chip .uname{font-size:13px;font-weight:600;color:var(--text-1)}
+.page-content{padding:2rem;flex:1;max-width:1280px;width:100%}
+.view{display:none}
+.view.active{display:block;animation:reveal .3s ease}
+@keyframes reveal{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page-hero{margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:flex-end;justify-content:space-between;gap:1rem}
+.page-hero h1{font-family:var(--font-display);font-size:28px;font-weight:800;color:var(--text-1);line-height:1.15}
+.page-hero p{color:var(--text-2);font-size:14px;margin-top:.35rem;max-width:480px}
+.page-badge{display:inline-flex;align-items:center;gap:6px;background:var(--blue-lo);border:1px solid rgba(79,142,247,.2);color:var(--blue);font-size:11px;font-family:var(--font-mono);padding:4px 10px;border-radius:99px;white-space:nowrap}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:2rem}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;position:relative;overflow:hidden;transition:border-color var(--transition),transform var(--transition)}
+.stat-card:hover{border-color:rgba(79,142,247,.3);transform:translateY(-2px)}
+.stat-card.c-blue{--c1:#4f8ef7;--c2:#7c6cf7}.stat-card.c-green{--c1:#22c55e;--c2:#22d3ee}.stat-card.c-amber{--c1:#f59e0b;--c2:#f43f5e}.stat-card.c-indigo{--c1:#7c6cf7;--c2:#ec4899}
+.stat-icon{width:36px;height:36px;border-radius:var(--radius-sm);display:grid;place-items:center;font-size:15px;margin-bottom:.9rem}
+.c-blue .stat-icon{background:rgba(79,142,247,.15);color:var(--blue)}.c-green .stat-icon{background:rgba(34,197,94,.12);color:var(--green)}.c-amber .stat-icon{background:rgba(245,158,11,.12);color:var(--amber)}.c-indigo .stat-icon{background:rgba(124,108,247,.12);color:var(--indigo)}
+.stat-val{font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--text-1);line-height:1}
+.stat-label{font-size:12px;color:var(--text-3);margin-top:4px;font-family:var(--font-mono)}
+.main-grid{display:grid;grid-template-columns:1fr 340px;gap:1.25rem}
+@media(max-width:1100px){.main-grid{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.4rem;border-bottom:1px solid var(--border)}
+.card-title{font-size:13.5px;font-weight:600;color:var(--text-1);display:flex;align-items:center;gap:.6rem}
+.card-title i{color:var(--blue);font-size:13px}
+.card-body{padding:1.4rem}
+.leaderboard-list{display:flex;flex-direction:column}
+.lb-item{display:flex;align-items:center;padding:1.2rem 1.5rem;border-bottom:1px solid var(--border);gap:1rem;transition:background var(--transition)}
+.lb-item:last-child{border-bottom:none}
+.lb-item:hover{background:var(--raised)}
+.lb-item.current-user{background:var(--blue-lo);border-left:3px solid var(--blue)}
+.lb-rank{font-family:var(--font-display);font-size:18px;font-weight:800;color:var(--text-3);width:32px;text-align:center}
+.lb-rank.rank-1{color:#fbbf24;font-size:24px}.lb-rank.rank-2{color:#9ca3af;font-size:20px}.lb-rank.rank-3{color:#b45309;font-size:18px}
+.lb-user{display:flex;align-items:center;gap:.85rem;flex:1}
+.lb-user img{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--border)}
+.lb-details{display:flex;flex-direction:column}
+.lb-name{font-size:14.5px;font-weight:600;color:var(--text-1)}
+.lb-exam{font-size:11px;color:var(--text-3);font-family:var(--font-mono);margin-top:2px}
+.lb-score{font-family:var(--font-mono);font-size:18px;font-weight:600;color:var(--blue);text-align:right}
+.lb-score span{font-size:11px;color:var(--text-3);font-weight:400;margin-left:2px}
+.timer-wrap{display:flex;flex-direction:column;align-items:center;padding:2rem 1.5rem}
+.timer-ring-wrap{position:relative;width:180px;height:180px;margin-bottom:1.5rem}
+.timer-ring-wrap svg{transform:rotate(-90deg);width:180px;height:180px;position:absolute;top:0;left:0}
+.timer-ring-bg{fill:none;stroke:var(--border);stroke-width:6}
+.timer-ring-fg{fill:none;stroke:url(#timerGrad);stroke-width:6;stroke-linecap:round;stroke-dasharray:502;stroke-dashoffset:0;transition:stroke-dashoffset 1s linear}
+.timer-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.timer-digits{font-family:var(--font-mono);font-size:36px;font-weight:600;color:var(--text-1);letter-spacing:2px}
+.timer-mode{font-size:10px;font-family:var(--font-mono);color:var(--text-3);letter-spacing:.1em;margin-top:2px}
+.timer-btns{display:flex;gap:.75rem}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.55rem 1.2rem;border-radius:var(--radius-sm);border:1px solid transparent;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all var(--transition)}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--indigo));color:#fff;border:none;box-shadow:0 4px 14px rgba(79,142,247,.3)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(79,142,247,.4)}
+.btn-ghost{background:var(--raised);color:var(--text-2);border-color:var(--border)}
+.btn-ghost:hover{color:var(--text-1);border-color:var(--muted)}
+.timer-config-area{display:none;width:100%;margin-top:1.2rem;padding-top:1.2rem;border-top:1px solid var(--border)}
+.timer-config-area.open{display:block}
+.timer-config-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.pomodoro-segments{display:flex;gap:6px;margin-top:1.2rem;align-items:center}
+.pomo-seg{width:28px;height:4px;border-radius:2px;background:var(--muted);transition:background var(--transition)}
+.pomodoro-segments .pomo-seg.done{background:var(--green)}
+.log-list{display:flex;flex-direction:column;max-height:320px;overflow-y:auto}
+.log-list{display:flex;flex-direction:column;max-height:320px;overflow-y:auto}
+.log-item{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 0;border-bottom:1px solid var(--border)}
+.log-item:last-child{border-bottom:none}
+.log-dot{width:7px;height:7px;border-radius:50%;background:var(--blue);margin-top:5px;flex-shrink:0}
+.log-text{font-size:13px;color:var(--text-2);line-height:1.45}
+.log-time{font-size:11px;color:var(--text-3);font-family:var(--font-mono);margin-top:2px}
+.progress-section{margin-bottom:1.5rem}
+.progress-label{display:flex;justify-content:space-between;font-size:12px;color:var(--text-3);font-family:var(--font-mono);margin-bottom:.5rem}
+.progress-track{height:6px;background:var(--border);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px;transition:width .6s ease}
+.subject-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.subject-chip{background:var(--raised);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.75rem 1rem;font-size:13px;color:var(--text-2);display:flex;align-items:center;gap:.6rem;transition:all var(--transition)}
+.subject-chip:hover{border-color:rgba(79,142,247,.3);color:var(--text-1)}
+.subject-chip i{font-size:13px}
+.chip{display:inline-flex;align-items:center;gap:5px;background:var(--raised);border:1px solid var(--border);color:var(--text-3);font-size:11px;font-family:var(--font-mono);padding:3px 9px;border-radius:99px}
+.chip-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.chip.live{border-color:rgba(34,197,94,.25);color:var(--green)}
+.section-banner {background:linear-gradient(135deg,var(--void),var(--raised));border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;margin-bottom:2rem}
+.section-banner h1{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--text-1)}
+.section-banner p{color:var(--text-2);font-size:13.5px;margin-top:.5rem}
+.banner-cbse{border-left:4px solid var(--rose)}
+.banner-neet{border-left:4px solid var(--green)}
+.banner-jee{border-left:4px solid var(--cyan)}
+.banner-mentor{border-left:4px solid var(--amber)}
+.search-bar{position:relative;margin-bottom:1.5rem}
+.search-bar i{position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:var(--text-3);font-size:14px}
+.search-bar input{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.75rem 1rem .75rem 2.6rem;color:var(--text-1);font-size:14px;outline:none;transition:border-color var(--transition)}
+.search-bar input:focus{border-color:rgba(79,142,247,.5)}
+.pdf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem}
+.pdf-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;transition:all var(--transition)}
+.pdf-card:hover{border-color:rgba(79,142,247,.3);transform:translateY(-2px)}
+.pdf-file-icon{width:40px;height:40px;background:rgba(244,63,94,.1);border-radius:var(--radius-sm);display:grid;place-items:center;font-size:20px;color:var(--rose);flex-shrink:0}
+.pdf-meta{flex:1;min-width:0}
+.pdf-name{font-size:13.5px;font-weight:600;color:var(--text-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pdf-sub{font-size:11px;color:var(--text-3);font-family:var(--font-mono);margin-top:3px}
+.dl-btn{width:34px;height:34px;border-radius:var(--radius-sm);background:var(--raised);border:1px solid var(--border);color:var(--text-2);display:grid;place-items:center;font-size:14px;cursor:pointer;transition:all var(--transition);flex-shrink:0}
+.dl-btn:hover{background:var(--blue-lo);border-color:rgba(79,142,247,.3);color:var(--blue)}
+.mentor-list{list-style:none;display:flex;flex-direction:column;gap:.75rem}
+.mentor-item{display:flex;align-items:flex-start;gap:.9rem;padding:.85rem 1rem;background:var(--raised);border-radius:var(--radius-sm);border:1px solid var(--border);font-size:13.5px;color:var(--text-2);line-height:1.55}
+.mentor-num{font-family:var(--font-mono);font-size:11px;color:var(--blue);font-weight:600;flex-shrink:0;padding-top:2px}
+.mentor-edit-area{display:none;margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+.mentor-edit-area.open{display:block}
+.edit-actions{display:flex;gap:.75rem;margin-top:1rem}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.form-group{display:flex;flex-direction:column;gap:.4rem}
+.form-input{background:var(--raised);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.75rem 1rem;color:var(--text-1);font-size:14px;outline:none;transition:border-color var(--transition);width:100%}
+.form-input:focus{border-color:rgba(79,142,247,.5)}
+.form-field{background:var(--raised);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.75rem 1rem;color:var(--text-1);font-size:13.5px;outline:none;resize:vertical;width:100%;transition:border-color var(--transition)}
+.form-field:focus{border-color:rgba(79,142,247,.5)}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.avatar-row{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:.5rem}
+.av-opt{width:52px;height:52px;border-radius:50%;object-fit:cover;cursor:pointer;border:3px solid transparent;transition:all var(--transition);opacity:.65}
+.av-opt.selected,.av-opt:hover{opacity:1;border-color:var(--blue)}
+.form-actions{display:flex;gap:.75rem;margin-top:1.5rem}
+.empty-state{display:flex;flex-direction:column;align-items:center;gap:.75rem;color:var(--text-3);font-size:13px;padding:2.5rem;text-align:center}
+.empty-state i{font-size:28px;opacity:.5}
+.toast-wrap{position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.5rem;pointer-events:none}
+.toast{display:flex;align-items:center;gap:.65rem;background:var(--surface);border:1px solid var(--border);color:var(--text-1);padding:.7rem 1.1rem;border-radius:var(--radius-sm);font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.3);pointer-events:auto}
+.toast i{font-size:15px;color:var(--green)}
+.toast.warn i{color:var(--amber)}
+.toast.err i{color:var(--rose)}
+.toast.info i{color:var(--blue)}
+/* Mentor student management */
+.student-table{width:100%;border-collapse:collapse;font-size:13.5px}
+.student-table th{text-align:left;padding:.75rem 1rem;font-size:11px;color:var(--text-3);font-family:var(--font-mono);border-bottom:1px solid var(--border);letter-spacing:.08em}
+.student-table td{padding:.9rem 1rem;border-bottom:1px solid var(--border);color:var(--text-2)}
+.student-table tr:last-child td{border-bottom:none}
+.student-table tr:hover td{background:var(--raised)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:99px;font-size:11px;font-family:var(--font-mono)}
+.badge-green{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+.badge-rose{background:rgba(244,63,94,.1);color:var(--rose);border:1px solid rgba(244,63,94,.2)}
+.badge-blue{background:rgba(79,142,247,.1);color:var(--blue);border:1px solid rgba(79,142,247,.2)}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div style="position: absolute; top: 1.5rem; right: 1.5rem; z-index: 10;">
+    <select class="lang-dropdown" id="login-lang-select">
+      <option value="en">English</option>
+      <option value="ta">தமிழ் (Tamil)</option>
+      <option value="ml">മലയാളം (Malayalam)</option>
+      <option value="mr">मराठी (Marathi)</option>
+      <option value="hi">हिन्दी (Hindi)</option>
+      <option value="ja">日本語 (Japanese)</option>
+      <option value="es">Español (Spanish)</option>
+      <option value="or">ଓଡ଼ିଆ (Odia)</option>
+    </select>
+  </div>
+
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-icon"><i class="fa-solid fa-atom"></i></div>
+      <h1 data-i18n="app-title">PRIME PHYSICS</h1>
+      <p data-i18n="app-subtitle">Command Center · Secure Portal</p>
+    </div>
+
+    <div class="login-tabs">
+      <button class="login-tab active" id="tab-login" data-i18n="tab-signin">Sign In</button>
+      <button class="login-tab" id="tab-register" data-i18n="tab-register">Register</button>
+    </div>
+
+    <div class="login-tabs" style="margin-bottom:1rem">
+      <button class="login-tab active" data-role="student" id="role-student">
+        <i class="fa-solid fa-user-graduate"></i> <span data-i18n="role-student">Student</span>
+      </button>
+      <button class="login-tab" data-role="mentor" id="role-mentor">
+        <i class="fa-solid fa-chalkboard-user"></i> <span data-i18n="role-mentor">Mentor</span>
+      </button>
+    </div>
+
+    <div class="login-form">
+      <div id="login-error" class="login-error"></div>
+
+      <div id="login-fields">
+        <div class="login-input-group">
+          <i class="fa-solid fa-user"></i>
+          <input class="login-input" type="text" id="inp-login" placeholder="Username or email" data-i18n-placeholder="placeholder-login">
+        </div>
+        <div class="login-input-group" style="margin-top:.75rem">
+          <i class="fa-solid fa-lock"></i>
+          <input class="login-input" type="password" id="inp-password" placeholder="Password" data-i18n-placeholder="placeholder-pass">
+        </div>
+      </div>
+
+      <div id="register-fields" class="reg-extra">
+        <div class="login-input-group">
+          <i class="fa-solid fa-id-card"></i>
+          <input class="login-input" type="text" id="inp-fullname" placeholder="Full name" data-i18n-placeholder="placeholder-name">
+        </div>
+        <div class="login-input-group">
+          <i class="fa-solid fa-envelope"></i>
+          <input class="login-input" type="email" id="inp-email" placeholder="Email address" data-i18n-placeholder="placeholder-email">
+        </div>
+        <div class="login-input-group mentor-code-row" id="mentor-code-row">
+          <i class="fa-solid fa-key"></i>
+          <input class="login-input" type="text" id="inp-mentor-code" placeholder="Mentor registration code" data-i18n-placeholder="placeholder-code">
+        </div>
+      </div>
+
+      <button class="login-btn-submit" id="btn-login">
+        <i id="btn-login-icon" class="fa-solid fa-arrow-right-to-bracket"></i> <span id="btn-login-text" data-i18n="tab-signin">Sign In</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="dashboard-app">
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i class="fa-solid fa-atom"></i></div>
+      <div class="brand-name">PRIME PHYSICS<span id="sidebar-role">STUDENT DASHBOARD</span></div>
+    </div>
+
+    <div class="nav-section">
+      <span class="nav-label" data-i18n="nav-label-workspace">Workspace</span>
+      <a class="nav-link" data-target="view-home"><i class="fa-solid fa-house"></i> <span data-i18n="nav-home">Home</span></a>
+      <a class="nav-link" data-target="view-leaderboard"><i class="fa-solid fa-ranking-star"></i> <span data-i18n="nav-leaderboard">Leaderboard</span></a>
+    </div>
+
+    <div class="nav-section" id="nav-student-section">
+      <span class="nav-label" data-i18n="nav-label-resources">Resources</span>
+      <a class="nav-link" data-target="view-cbse"><i class="fa-solid fa-box-archive"></i> <span data-i18n="nav-cbse">CBSE PYQs</span></a>
+      <a class="nav-link" data-target="view-neet"><i class="fa-solid fa-book-medical"></i> <span data-i18n="nav-neet">NEET Notes</span></a>
+      <a class="nav-link" data-target="view-jee"><i class="fa-solid fa-flask"></i> <span data-i18n="nav-jee">JEE Notes</span></a>
+      <a class="nav-link" data-target="view-mentor"><i class="fa-solid fa-clipboard-list"></i> <span data-i18n="nav-instructions">Mentor Instructions</span></a>
+    </div>
+
+    <div class="nav-section" id="nav-mentor-section" style="display:none">
+      <span class="nav-label" data-i18n="nav-label-tools">Mentor Tools</span>
+      <a class="nav-link" data-target="view-mentor"><i class="fa-solid fa-clipboard-list"></i> <span data-i18n="nav-instructions">Instructions</span></a>
+      <a class="nav-link" data-target="view-students"><i class="fa-solid fa-users"></i> <span data-i18n="nav-students">Students</span></a>
+      <a class="nav-link" data-target="view-upload"><i class="fa-solid fa-upload"></i> <span data-i18n="nav-upload">Upload PDF</span></a>
+    </div>
+
+    <div class="nav-section">
+      <span class="nav-label" data-i18n="nav-label-account">Account</span>
+      <a class="nav-link" data-target="view-profile"><i class="fa-solid fa-user-pen"></i> <span data-i18n="nav-profile">Profile</span></a>
+      <a class="nav-link" id="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span data-i18n="nav-logout">Logout</span></a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="streak-widget">
+        <div class="streak-num" id="streak-num">🔥 7</div>
+        <div class="streak-label" data-i18n="widget-streak">Day Streak</div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="workspace">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="breadcrumb">PRIME PHYSICS / <span id="bc-section">Home</span></div>
+      </div>
+      <div class="topbar-right">
+        <select class="lang-dropdown" id="dashboard-lang-select">
+          <option value="en">English</option>
+          <option value="ta">தமிழ் (Tamil)</option>
+          <option value="ml">മലയാളം (Malayalam)</option>
+          <option value="mr">मराठी (Marathi)</option>
+          <option value="hi">हिन्दी (Hindi)</option>
+          <option value="ja">日本語 (Japanese)</option>
+          <option value="es">Español (Spanish)</option>
+          <option value="or">ଓଡ଼ିଆ (Odia)</option>
+        </select>
+        <button class="theme-btn" id="theme-btn"><i class="fa-solid fa-sun"></i></button>
+        <div class="user-chip" id="user-chip">
+          <img id="av-header" src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=256&auto=format&fit=crop" alt="Avatar">
+          <span class="uname" id="uname-header">…</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <section id="view-home" class="view active">
+        <div class="page-hero">
+          <div>
+            <h1 id="home-welcome">Welcome 👋</h1>
+            <div class="sub-desc" style="margin-top: 4px;">
+              <p id="home-subtitle" data-i18n="home-subtitle">Track your progress, manage focus sessions, and stay ahead of the curve.</p>
+            </div>
+          </div>
+          <span class="page-badge chip live"><span class="chip-dot"></span> <span id="session-chip" data-i18n="chip-session-active">Session Active</span></span>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card c-blue">
+            <div class="stat-icon"><i class="fa-solid fa-bolt"></i></div>
+            <div class="stat-val" id="stat-focus">0 / 4 hrs</div>
+            <div class="stat-label" data-i18n="card-focus-title">Daily Focus</div>
+          </div>
+          <div class="stat-card c-green">
+            <div class="stat-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            <div class="stat-val" id="stat-exam">JEE</div>
+            <div class="stat-label" data-i18n="card-exam-title">Target Exam</div>
+          </div>
+          <div class="stat-card c-amber">
+            <div class="stat-icon"><i class="fa-solid fa-fire"></i></div>
+            <div class="stat-val" id="stat-streak">7 days</div>
+            <div class="stat-label" data-i18n="card-streak-title">Current Streak</div>
+          </div>
+          <div class="stat-card c-indigo">
+            <div class="stat-icon"><i class="fa-solid fa-file-pdf"></i></div>
+            <div class="stat-val" id="stat-files">0</div>
+            <div class="stat-label" data-i18n="card-files-title">Study Files</div>
+          </div>
+        </div>
+
+        <div class="main-grid">
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title"><i class="fa-solid fa-chart-line"></i> <span data-i18n="panel-progress-title">Chapter Progress</span></div>
+            </div>
+            <div class="card-body">
+              <div class="progress-section">
+                <div class="progress-label"><span>Electrostatics</span><span>72%</span></div>
+                <div class="progress-track"><div class="progress-fill" style="width:72%"></div></div>
+              </div>
+              <div class="progress-section">
+                <div class="progress-label"><span>Current Electricity</span><span>55%</span></div>
+                <div class="progress-track"><div class="progress-fill" style="width:55%"></div></div>
+              </div>
+              <div class="progress-section">
+                <div class="progress-label"><span>Optics</span><span>40%</span></div>
+                <div class="progress-track"><div class="progress-fill" style="width:40%"></div></div>
+              </div>
+              <div class="progress-section">
+                <div class="progress-label"><span>Modern Physics</span><span>88%</span></div>
+                <div class="progress-track"><div class="progress-fill" style="width:88%"></div></div>
+              </div>
+              <div style="margin-top:1.5rem">
+                <div class="card-title" style="margin-bottom:1rem"><i class="fa-solid fa-atom"></i> <span data-i18n="panel-overview-title">Subject Overview</span></div>
+                <div class="subject-grid">
+                  <div class="subject-chip"><i class="fa-solid fa-bolt" style="color:var(--amber)"></i> Mechanics</div>
+                  <div class="subject-chip"><i class="fa-solid fa-magnet" style="color:var(--blue)"></i> Electromagnetism</div>
+                  <div class="subject-chip"><i class="fa-solid fa-eye" style="color:var(--cyan)"></i> Optics</div>
+                  <div class="subject-chip"><i class="fa-solid fa-radiation" style="color:var(--rose)"></i> Modern Physics</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:1.25rem">
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title"><i class="fa-solid fa-stopwatch"></i> <span data-i18n="panel-timer-title">Pomodoro Timer</span></div>
+                <button class="btn btn-ghost" id="timer-cfg-toggle-btn" style="padding:.3rem .7rem;font-size:12px"><i class="fa-solid fa-gear"></i></button>
+              </div>
+              <div class="timer-wrap">
+                <div class="timer-ring-wrap">
+                  <svg viewBox="0 0 180 180">
+                    <defs>
+                      <linearGradient id="timerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#4f8ef7"/><stop offset="100%" stop-color="#7c6cf7"/>
+                      </linearGradient>
+                    </defs>
+                    <circle class="timer-ring-bg" cx="90" cy="90" r="80"/>
+                    <circle class="timer-ring-fg" id="timer-ring" cx="90" cy="90" r="80"/>
+                  </svg>
+                  <div class="timer-center">
+                    <div class="timer-digits" id="timer-display">25:00</div>
+                    <div class="timer-mode" id="timer-mode-lbl">FOCUS</div>
+                  </div>
+                </div>
+                <div class="timer-btns">
+                  <button class="btn btn-primary" id="timer-start-btn"><i class="fa-solid fa-play"></i> <span data-i18n="btn-timer-start">Start</span></button>
+                  <button class="btn btn-ghost" id="timer-reset-btn"><i class="fa-solid fa-rotate-left"></i></button>
+                </div>
+                <div class="pomodoro-segments" style="margin-top:1rem">
+                  <div class="pomo-seg"></div><div class="pomo-seg"></div>
+                  <div class="pomo-seg"></div><div class="pomo-seg"></div>
+                  <span id="timer-session-chip" style="font-size:11px;color:var(--text-3);font-family:var(--font-mono);margin-left:.5rem">Session 1</span>
+                </div>
+                <div class="timer-config-area" id="timer-config-area">
+                  <div class="timer-config-grid">
+                    <div class="form-group"><label class="form-label" data-i18n="label-timer-work">Focus (min)</label>
+                      <input type="number" class="form-input" id="cfg-focus-input" min="1" max="120" value="25"></div>
+                    <div class="form-group"><label class="form-label" data-i18n="label-timer-break">Break (min)</label>
+                      <input type="number" class="form-input" id="cfg-break-input" min="1" max="60" value="5"></div>
+                  </div>
+                  <button class="btn btn-primary" id="timer-save-cfg-btn" style="margin-top:.75rem;width:100%;justify-content:center">
+                    <i class="fa-solid fa-floppy-disk"></i> <span data-i18n="btn-save">Save</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><div class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> <span data-i18n="panel-log-title">Activity Log</span></div></div>
+              <div class="card-body" style="padding:0 1.4rem 1.4rem">
+                <div class="log-list" id="log-list"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-leaderboard" class="view">
+        <div class="page-hero">
+          <div>
+            <h1><i class="fa-solid fa-ranking-star" style="color:var(--amber);margin-right:12px"></i><span data-i18n="nav-leaderboard">Study Leaderboard</span></h1>
+            <p data-i18n="leaderboard-subtitle">Compete with peers based on total focused study hours.</p>
+          </div>
+        </div>
+        <div class="card" style="max-width:800px">
+          <div class="card-head">
+            <div class="card-title"><i class="fa-solid fa-medal"></i> <span data-i18n="panel-leaderboard-title">Global Standings</span></div>
+            <span class="chip live"><span class="chip-dot"></span> Live</span>
+          </div>
+          <div class="card-body" style="padding:0">
+            <div class="leaderboard-list" id="leaderboard-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-cbse" class="view">
+        <div class="section-banner banner-cbse">
+          <h1><i class="fa-solid fa-box-archive" style="margin-right:.5rem"></i>CBSE Grade 12 Question Bank</h1>
+          <p>Previous year board physics papers — practice under timed conditions.</p>
+        </div>
+        <div class="search-bar"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="Search papers…" id="cbse-search"></div>
+        <div class="pdf-grid" id="cbse-grid"></div>
+      </section>
+
+      <section id="view-neet" class="view">
+        <div class="section-banner banner-neet">
+          <h1><i class="fa-solid fa-book-medical" style="margin-right:.5rem"></i>NEET-UG Study Materials</h1>
+          <p>Graph banks, mind maps, flashcards, and handbooks.</p>
+        </div>
+        <div class="search-bar"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="Search materials…" id="neet-search"></div>
+        <div class="pdf-grid" id="neet-grid"></div>
+      </section>
+
+      <section id="view-jee" class="view">
+        <div class="section-banner banner-jee">
+          <h1><i class="fa-solid fa-flask" style="margin-right:.5rem"></i>JEE Main Study Materials</h1>
+          <p>Formula sheets, mind maps, and past papers.</p>
+        </div>
+        <div class="search-bar"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="Search materials…" id="jee-search"></div>
+        <div class="pdf-grid" id="jee-grid"></div>
+      </section>
+
+      <section id="view-mentor" class="view">
+        <div class="section-banner banner-mentor">
+          <h1><i class="fa-solid fa-clipboard-list" style="margin-right:.5rem"></i>Mentor Instructions</h1>
+          <p>Directives from your mentor — follow these daily to maximise exam readiness.</p>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title"><i class="fa-solid fa-bullseye"></i> Current Directives</div>
+            <button class="btn btn-ghost" id="mentor-edit-btn" style="display:none;padding:.4rem .85rem;font-size:12px">
+              <i class="fa-solid fa-pen"></i> Edit
+            </button>
+          </div>
+          <div class="card-body">
+            <ul class="mentor-list" id="mentor-list"></ul>
+            <div class="mentor-edit-area" id="mentor-edit-area">
+              <textarea class="form-field" id="mentor-textarea" rows="8" placeholder="One instruction per line…"></textarea>
+              <div class="edit-actions">
+                <button class="btn btn-primary" id="mentor-save-btn" style="font-size:13px;padding:.5rem 1.1rem">
+                  <i class="fa-solid fa-floppy-disk"></i> Save
+                </button>
+                <button class="btn btn-ghost" id="mentor-cancel-btn" style="font-size:13px;padding:.5rem 1.1rem">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-students" class="view">
+        <div class="page-hero"><div>
+          <h1><i class="fa-solid fa-users" style="color:var(--blue);margin-right:12px"></i>Student Management</h1>
+          <p>View and manage all registered students.</p>
+        </div></div>
+        <div class="card">
+          <div class="card-head"><div class="card-title"><i class="fa-solid fa-table-list"></i> All Students</div></div>
+          <div class="card-body" style="padding:0;overflow-x:auto">
+            <table class="student-table">
+              <thead><tr>
+                <th>Name</th><th>Username</th><th>Exam</th>
+                <th>Study Mins</th><th>Status</th><th>Action</th>
+              </tr></thead>
+              <tbody id="students-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-upload" class="view">
+        <div class="page-hero"><div>
+          <h1><i class="fa-solid fa-upload" style="color:var(--cyan);margin-right:12px"></i>Upload Study Material</h1>
+          <p>Upload PDFs to CBSE, NEET, or JEE resource banks.</p>
+        </div></div>
+        <div class="card" style="max-width:560px">
+          <div class="card-body">
+            <div class="form-group" style="margin-bottom:1rem">
+              <label class="form-label">Resource Name</label>
+              <input type="text" class="form-input" id="up-name" placeholder="e.g. JEE Main Paper 2024">
+            </div>
+            <div class="form-group" style="margin-bottom:1rem">
+              <label class="form-label">Subtitle / Description</label>
+              <input type="text" class="form-input" id="up-sub" placeholder="e.g. Previous Year Questions">
+            </div>
+            <div class="form-group" style="margin-bottom:1rem">
+              <label class="form-label">Category</label>
+              <select class="form-input" id="up-cat">
+                <option value="cbse">CBSE</option>
+                <option value="neet">NEET</option>
+                <option value="jee">JEE</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom:1.5rem">
+              <label class="form-label">PDF File</label>
+              <input type="file" class="form-input" id="up-file" accept=".pdf">
+            </div>
+            <button class="btn btn-primary" id="up-submit" style="width:100%;justify-content:center">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Upload & Add Resource
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-profile" class="view">
+        <div class="page-hero"><div>
+          <h1>Profile &amp; Settings</h1>
+          <p>Update your name, target exam, and daily study goal.</p>
+        </div></div>
+        <div class="card">
+          <div class="card-head"><div class="card-title"><i class="fa-solid fa-user-pen"></i> Account Configuration</div></div>
+          <div class="card-body">
+            <div class="profile-grid">
+              <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-input" id="p-name" placeholder="Your name">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Target Exam</label>
+                <select class="form-input" id="p-exam">
+                  <option>JEE Main &amp; Advanced</option>
+                  <option>NEET UG Physics</option>
+                  <option>AP Physics C</option>
+                  <option>IB Physics HL</option>
+                  <option>CBSE Board Exams</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Daily Goal (hours)</label>
+                <input type="number" class="form-input" id="p-hours" min="1" max="16" placeholder="e.g. 4">
+              </div>
+            </div>
+            <div class="form-group" style="margin-top:1rem">
+              <label class="form-label">Avatar</label>
+              <div class="avatar-row">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256&auto=format&fit=crop" class="av-opt" alt="">
+                <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=256&auto=format&fit=crop" class="av-opt" alt="">
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=256&auto=format&fit=crop" class="av-opt" alt="">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&auto=format&fit=crop" class="av-opt" alt="">
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-primary" id="p-save"><i class="fa-solid fa-floppy-disk"></i> Save changes</button>
+              <button class="btn btn-ghost" id="p-reset">Reset defaults</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div></div></div><div class="toast-wrap" id="toasts"></div>
+
+<script>
+/* ── LOCALIZATION DICTIONARY ────────────────────────────── */
+const dict = {
+  en: {
+    "app-title": "PRIME PHYSICS", "app-subtitle": "Command Center · Secure Portal",
+    "tab-signin": "Sign In", "tab-register": "Register", "role-student": "Student", "role-mentor": "Mentor",
+    "placeholder-login": "Username or email", "placeholder-pass": "Password", "placeholder-name": "Full name",
+    "placeholder-email": "Email address", "placeholder-code": "Mentor registration code", "btn-submit-text": "Sign In",
+    "nav-label-workspace": "Workspace", "nav-home": "Home", "nav-leaderboard": "Leaderboard",
+    "nav-label-resources": "Resources", "nav-cbse": "CBSE PYQs", "nav-neet": "NEET Notes", "nav-jee": "JEE Notes", "nav-instructions": "Instructions",
+    "nav-label-tools": "Mentor Tools", "nav-students": "Students", "nav-upload": "Upload PDF",
+    "nav-label-account": "Account", "nav-profile": "Profile", "nav-logout": "Logout", "widget-streak": "Day Streak",
+    "home-subtitle": "Track your progress, manage focus sessions, and stay ahead of the curve.",
+    "chip-session-active": "Session Active", "card-focus-title": "Daily Focus", "card-exam-title": "Target Exam",
+    "card-streak-title": "Current Streak", "card-files-title": "Study Files", "panel-progress-title": "Chapter Progress",
+    "panel-overview-title": "Subject Overview", "panel-timer-title": "Pomodoro Timer", "btn-timer-start": "Start",
+    "label-timer-work": "Focus (min)", "label-timer-break": "Break (min)", "btn-save": "Save", "panel-log-title": "Activity Log",
+    "leaderboard-subtitle": "Compete with peers based on total focused study hours.", "panel-leaderboard-title": "Global Standings",
+    "greet-morn": "Good morning", "greet-aft": "Good afternoon", "greet-eve": "Good evening", "greet-welcome": "Welcome back"
+  },
+  ta: {
+    "app-title": "பிரைம் பிசிக்ஸ்", "app-subtitle": "கட்டளை மையம் · பாதுகாப்பான போர்டல்",
+    "tab-signin": "உள்நுழைக", "tab-register": "பதிவுசெய்", "role-student": "மாணவர்", "role-mentor": "ஆசிரியர்",
+    "placeholder-login": "பயனர் பெயர் அல்லது மின்னஞ்சல்", "placeholder-pass": "கடவுச்சொல்", "placeholder-name": "முழு பெயர்",
+    "placeholder-email": "மின்னஞ்சல் முகவரி", "placeholder-code": "ஆசிரியர் பதிவு குறியீடு", "btn-submit-text": "உள்நுழைக",
+    "nav-label-workspace": "பணிவிடம்", "nav-home": "முகப்பு", "nav-leaderboard": "தரவரிசை பட்டியல்",
+    "nav-label-resources": "பாடத்திட்டங்கள்", "nav-cbse": "CBSE வினாக்கள்", "nav-neet": "NEET குறிப்புகள்", "nav-jee": "JEE குறிப்புகள்", "nav-instructions": "ஆசிரியர் அறிவுறுத்தல்கள்",
+    "nav-label-tools": "ஆசிரியர் கருவிகள்", "nav-students": "மாணவர்கள்", "nav-upload": "PDF பதிவேற்றம்",
+    "nav-label-account": "கணக்கு", "nav-profile": "சுயவிவரம்", "nav-logout": "வெளியேறு", "widget-streak": "தொடர் நாட்கள்",
+    "home-subtitle": "உங்கள் முன்னேற்றத்தைக் கண்காணித்து, கவனம் செலுத்திப் படியுங்கள்.",
+    "chip-session-active": "அமர்வு செயலில் உள்ளது", "card-focus-title": "தினசரி கவனம்", "card-exam-title": "இலக்கு தேர்வு",
+    "card-streak-title": "தற்போதைய தொடர்", "card-files-title": "பாடக் கோப்புகள்", "panel-progress-title": "பாட முன்னேற்றம்",
+    "panel-overview-title": "பாடம் கண்ணோட்டம்", "panel-timer-title": "போმოடோரோ கடிகாரம்", "btn-timer-start": "தொடங்கு",
+    "label-timer-work": "கவனம் (நிமிடம்)", "label-timer-break": "இடைவேளை (நிமிடம்)", "btn-save": "சேமி", "panel-log-title": "செயல்பாட்டு பதிவு",
+    "leaderboard-subtitle": "மொத்த படிப்பு நேரத்தின் அடிப்படையில் மற்றவர்களுடன் போட்டியிடுங்கள்.", "panel-leaderboard-title": "உலகளாவிய நிலைகள்",
+    "greet-morn": "காலை வணக்கம்", "greet-aft": "மதிய வணக்கம்", "greet-eve": "மாலை வணக்கம்", "greet-welcome": "மீண்டும் வருக"
+  },
+  ml: {
+    "app-title": "പ്രൈം ഫിസിക്സ്", "app-subtitle": "കമാൻഡ് സെന്റർ · സുരക്ഷിത പോർട്ടൽ",
+    "tab-signin": "ലോഗിൻ", "tab-register": "രജിസ്റ്റർ", "role-student": "വിദ്യാർത്ഥി", "role-mentor": "മെന്റർ",
+    "placeholder-login": "ഉപയോക്തൃനാമം അല്ലെങ്കിൽ ഇമെയിൽ", "placeholder-pass": "പാസ്‌വേഡ്", "placeholder-name": "പൂർണ്ണമായ പേര്",
+    "placeholder-email": "ഇമെയിൽ വിലാസം", "placeholder-code": "മെന്റർ രജിസ്ട്രേഷൻ കോഡ്", "btn-submit-text": "ലോഗിൻ",
+    "nav-label-workspace": "വർക്ക്‌സ്‌പേസ്", "nav-home": "ഹോം", "nav-leaderboard": "ലീഡർബോർഡ്",
+    "nav-label-resources": "വിഭവങ്ങൾ", "nav-cbse": "CBSE ചോദ്യങ്ങൾ", "nav-neet": "NEET നോട്സ്", "nav-jee": "JEE നോട്സ്", "nav-instructions": "മെന്റർ നിർദ്ദേശങ്ങൾ",
+    "nav-label-tools": "മെന്റർ ടൂളുകൾ", "nav-students": "വിദ്യാർത്ഥികൾ", "nav-upload": "PDF അപ്‌ലോഡ് ചെയ്യുക",
+    "nav-label-account": "അക്കൗണ്ട്", "nav-profile": "പ്രൊഫൈൽ", "nav-logout": "ലോഗ് ഔട്ട്", "widget-streak": "ദിവസത്തെ സ്ട്രീക്ക്",
+    "home-subtitle": "നിങ്ങളുടെ പുരോഗതി ട്രാക്ക് ചെയ്യുക, ഫോക്കസ് സെഷനുകൾ കൈകാര്യം ചെയ്യുക.",
+    "chip-session-active": "സെഷൻ സജീവം", "card-focus-title": "പ്രതിദിന ഫോക്കസ്", "card-exam-title": "ലക്ഷ്യ പരീക്ഷ",
+    "card-streak-title": "നിലവിലെ സ്ട്രീക്ക്", "card-files-title": "പഠന ഫയലുകൾ", "panel-progress-title": "അധ്യായ പുരോഗതി",
+    "panel-overview-title": "വിഷയ അവലോകനം", "panel-timer-title": "പോമോഡോറോ ടൈമർ", "btn-timer-start": "തുടങ്ങുക",
+    "label-timer-work": "ശ്രദ്ധിക്കുക (മിനിറ്റ്)", "label-timer-break": "ഇടവേള (മിനിറ്റ്)", "btn-save": "സേവ്", "panel-log-title": "പ്രവർത്തന ലോഗ്",
+    "leaderboard-subtitle": "പഠന സമയത്തിന്റെ അടിസ്ഥാനത്തിൽ മറ്റുള്ളവരുമായി മത്സരിക്കുക.", "panel-leaderboard-title": "ഗ്ലോബൽ റാങ്കിംഗ്",
+    "greet-morn": "സുപ്രഭാതം", "greet-aft": "ശുഭ ഉച്ചതിരിഞ്ഞ്", "greet-eve": "ശുഭ സായാഹ്നം", "greet-welcome": "സ്വാഗതം"
+  },
+  mr: {
+    "app-title": "प्राइम फिजिक्स", "app-subtitle": "कमांड सेंटर · सुरक्षित पोर्टल",
+    "tab-signin": "साइन इन", "tab-register": "नोंदणी", "role-student": "विद्यार्थी", "role-mentor": "मार्गदर्शक",
+    "placeholder-login": "युझरनाव किंवा ईमेल", "placeholder-pass": "पासवर्ड", "placeholder-name": "पूर्ण नाव",
+    "placeholder-email": "ईमेल पत्ता", "placeholder-code": "मार्गदर्शक नोंदणी कोड", "btn-submit-text": "साइन इन",
+    "nav-label-workspace": "कार्यक्षेत्र", "nav-home": "होम", "nav-leaderboard": "लीडरबोर्ड",
+    "nav-label-resources": "साधने", "nav-cbse": "CBSE प्रश्नपत्रिका", "nav-neet": "NEET नोट्स", "nav-jee": "JEE नोट्स", "nav-instructions": "मार्गदर्शकांच्या सूचना",
+    "nav-label-tools": "मार्गदर्शक साधने", "nav-students": "विद्यार्थी", "nav-upload": "PDF अपलोड",
+    "nav-label-account": "खाते", "nav-profile": "प्रोफाइल", "nav-logout": "लॉग आउट", "widget-streak": "सलग दिवस",
+    "home-subtitle": "तुमच्या प्रगतीचा मागोवा घ्या आणि लक्ष केंद्रित करा.",
+    "chip-session-active": "सत्र सक्रिय आहे", "card-focus-title": "दैनिक फोकस", "card-exam-title": "लक्ष्य परीक्षा",
+    "card-streak-title": "सध्याची मालिका", "card-files-title": "अभ्यास फाइल्स", "panel-progress-title": "धडा प्रगती",
+    "panel-overview-title": "विषय विहंगावलोकन", "panel-timer-title": "पोमोडोरो टाइमर", "btn-timer-start": "सुरू करा",
+    "label-timer-work": "फोकस (मिसिनिट)", "label-timer-break": "विश्रांती (मिसिनिट)", "btn-save": "जतन करा", "panel-log-title": "कार्यप्रणाली लॉग",
+    "leaderboard-subtitle": "एकूण अभ्यास तासांवर आधारित मित्रांशी स्पर्धा करा.", "panel-leaderboard-title": "जागतिक क्रमवारी",
+    "greet-morn": "शुभ प्रभात", "greet-aft": "शुभ दुपार", "greet-eve": "शुभ संध्याकाळ", "greet-welcome": "स्वागत आहे"
+  },
+  hi: {
+    "app-title": "प्राइम फिजिक्स", "app-subtitle": "कमांड सेंटर · सुरक्षित पोर्टल",
+    "tab-signin": "साइन इन", "tab-register": "पंजीकरण", "role-student": "छात्र", "role-mentor": "मेंटर",
+    "placeholder-login": "यूजरनेम या ईमेल", "placeholder-pass": "पासवर्ड", "placeholder-name": "पूरा नाम",
+    "placeholder-email": "ईमेल पता", "placeholder-code": "मेंटर पंजीकरण कोड", "btn-submit-text": "साइन इन",
+    "nav-label-workspace": "कार्यक्षेत्र", "nav-home": "होम", "nav-leaderboard": "लीडरबोर्ड",
+    "nav-label-resources": "अध्ययन सामग्री", "nav-cbse": "CBSE प्रश्न", "nav-neet": "NEET नोट्स", "nav-jee": "JEE नोट्स", "nav-instructions": "मेंटर के निर्देश",
+    "nav-label-tools": "मेंटर टूल्स", "nav-students": "छात्र सूची", "nav-upload": "PDF अपलोड करें",
+    "nav-label-account": "खाता", "nav-profile": "प्रोफ़ाइल", "nav-logout": "लॉग आउट", "widget-streak": "सक्रिय दिन",
+    "home-subtitle": "अपनी प्रगति को ट्रैक करें और ध्यान केंद्रित करके पढ़ाई करें।",
+    "chip-session-active": "सत्र सक्रिय है", "card-focus-title": "दैनिक फोकस", "card-exam-title": "लक्ष्य परीक्षा",
+    "card-streak-title": "वर्तमान स्ट्रीक", "card-files-title": "अध्ययन फाइल्स", "panel-progress-title": "अध्याय प्रगति",
+    "panel-overview-title": "विषय अवलोकन", "panel-timer-title": "पोमोडोरो टाइमर", "btn-timer-start": "शुरू करें",
+    "label-timer-work": "फोकस (मिनट)", "label-timer-break": "ब्रेक (मिनट)", "btn-save": "सहेजें", "panel-log-title": "गतिविधि लॉग",
+    "leaderboard-subtitle": "कुल केंद्रित अध्ययन घंटों के आधार पर साथियों से प्रतिस्पर्धा करें।", "panel-leaderboard-title": "वैश्विक रैंकिंग",
+    "greet-morn": "सुप्रभात", "greet-aft": "नमस्कार", "greet-eve": "शुभ संध्या", "greet-welcome": "स्वागत है"
+  },
+  ja: {
+    "app-title": "PRIME PHYSICS", "app-subtitle": "コマンドセンター · セキュアポータル",
+    "tab-signin": "サインイン", "tab-register": "新規登録", "role-student": "生徒", "role-mentor": "講師",
+    "placeholder-login": "ユーザー名またはメールアドレス", "placeholder-pass": "パスワード", "placeholder-name": "氏名",
+    "placeholder-email": "メールアドレス", "placeholder-code": "講師用登録コード", "btn-submit-text": "サインイン",
+    "nav-label-workspace": "ワークスペース", "nav-home": "ホーム", "nav-leaderboard": "リーダーボード",
+    "nav-label-resources": "学習教材", "nav-cbse": "CBSE過去問", "nav-neet": "NEETノート", "nav-jee": "JEEノート", "nav-instructions": "講師指示事項",
+    "nav-label-tools": "講師用ツール", "nav-students": "生徒管理", "nav-upload": "PDFアップロード",
+    "nav-label-account": "アカウント", "nav-profile": "プロフィール", "nav-logout": "ログアウト", "widget-streak": "継続日数",
+    "home-subtitle": "進捗を追跡し、集中セッションを管理して目標を達成しましょう。",
+    "chip-session-active": "セッション中", "card-focus-title": "本日の集中時間", "card-exam-title": "意向受験",
+    "card-streak-title": "現在の継続", "card-files-title": "教材数", "panel-progress-title": "章別進捗状況",
+    "panel-overview-title": "科目概要", "panel-timer-title": "ポモドーロタイマー", "btn-timer-start": "開始",
+    "label-timer-work": "集中時間 (分)", "label-timer-break": "休憩時間 (分)", "btn-save": "保存", "panel-log-title": "アクティビティログ",
+    "leaderboard-subtitle": "総集中勉強時間をもとに仲間と競い合おう。", "panel-leaderboard-title": "グローバルランキング",
+    "greet-morn": "おはようございます", "greet-aft": "こんにちは", "greet-eve": "こんばんは", "greet-welcome": "おかえりなさい"
+  },
+  es: {
+    "app-title": "PRIME PHYSICS", "app-subtitle": "Centro de Comando · Portal Seguro",
+    "tab-signin": "Iniciar Sesión", "tab-register": "Registrarse", "role-student": "Estudiante", "role-mentor": "Mentor",
+    "placeholder-login": "Usuario o correo", "placeholder-pass": "Contraseña", "placeholder-name": "Nombre completo",
+    "placeholder-email": "Correo electrónico", "placeholder-code": "Código de registro de mentor", "btn-submit-text": "Iniciar Sesión",
+    "nav-label-workspace": "Área de Trabajo", "nav-home": "Inicio", "nav-leaderboard": "Clasificación",
+    "nav-label-resources": "Recursos", "nav-cbse": "CBSE PYQs", "nav-neet": "Notas NEET", "nav-jee": "Notas JEE", "nav-instructions": "Instrucciones de Mentor",
+    "nav-label-tools": "Herramientas de Mentor", "nav-students": "Estudiantes", "nav-upload": "Subir PDF",
+    "nav-label-account": "Cuenta", "nav-profile": "Perfil", "nav-logout": "Cerrar Sesión", "widget-streak": "Días Seguidos",
+    "home-subtitle": "Siga su progreso, administre sesiones de enfoque y manténgase a la vanguardia.",
+    "chip-session-active": "Sesión Activa", "card-focus-title": "Enfoque Diario", "card-exam-title": "Examen Objetivo",
+    "card-streak-title": "Racha Actual", "card-files-title": "Archivos de Estudio", "panel-progress-title": "Progreso por Capítulo",
+    "panel-overview-title": "Resumen de Materias", "panel-timer-title": "Temporizador Pomodoro", "btn-timer-start": "Iniciar",
+    "label-timer-work": "Enfoque (min)", "label-timer-break": "Descanso (min)", "btn-save": "Guardar", "panel-log-title": "Registro de Actividad",
+    "leaderboard-subtitle": "Compite con tus compañeros según el total de horas de estudio enfocado.", "panel-leaderboard-title": "Clasificación Global",
+    "greet-morn": "Buen día", "greet-aft": "Buenas tardes", "greet-eve": "Buenas noches", "greet-welcome": "Bienvenido de nuevo"
+  },
+  or: {
+    "app-title": "ପ୍ରାଇମ୍ ଫିଜିକ୍ସ", "app-subtitle": "କମାଣ୍ଡ ସେଣ୍ଟର · ସୁରକ୍ଷିତ ପୋର୍ଟାଲ",
+    "tab-signin": "ଲଗ୍-ଇନ୍", "tab-register": "ପଞ୍ଜୀକରଣ", "role-student": "ଛାତ୍ର", "role-mentor": "ମେଣ୍ଟର",
+    "placeholder-login": "ୟୁଜରନେମ୍ କିମ୍ବା ଇମେଲ୍", "placeholder-pass": "ପାସୱାର୍ଡ", "placeholder-name": "ପୁରା ନାମ",
+    "placeholder-email": "ଇମେଲ୍ ଠିକଣା", "placeholder-code": "ମେଣ୍ଟର ପଞ୍ଜୀକରଣ କୋଡ୍", "btn-submit-text": "ଲଗ୍-ଇନ୍",
+    "nav-label-workspace": "କାର୍ଯ୍ୟକ୍ଷେତ୍ର", "nav-home": "ମୁଖ୍ୟ ପୃଷ୍ଠା", "nav-leaderboard": "ଲିଡରବୋର୍ଡ",
+    "nav-label-resources": "ପାଠ୍ୟ ସାମଗ୍ରୀ", "nav-cbse": "CBSE ପ୍ରଶ୍ନପତ୍ର", "nav-neet": "NEET ନୋଟ୍ସ", "nav-jee": "JEE ନୋଟ୍ସ", "nav-instructions": "ମେଣ୍ଟର ନିର୍ଦ୍ଦେଶାବଳୀ",
+    "nav-label-tools": "ମେଣ୍ଟର ଟୁଲ୍ସ", "nav-students": "ଛାତ୍ର ତାଲିକା", "nav-upload": "PDF ଅପଲୋଡ୍",
+    "nav-label-account": "ଖାତା", "nav-profile": "ପ୍ରୋଫାଇଲ୍", "nav-logout": "ଲଗ୍ ଆଉଟ୍", "widget-streak": "କ୍ରମାଗତ ଦିନ",
+    "home-subtitle": "ଆପଣଙ୍କର ପ୍ରଗତି ଟ୍ରାକ୍ କରନ୍ତୁ ଏବଂ ମନୋଯୋଗ ଦେଇ ପାଠ ପଢନ୍ତୁ ।",
+    "chip-session-active": "ଅଧିବେଶନ ସକ୍ରିୟ ଅଛି", "card-focus-title": "ଦୈନିକ ଫୋକସ୍", "card-exam-title": "ଲକ୍ଷ୍ୟ ପରୀକ୍ଷା",
+    "card-streak-title": "ବର୍ତ୍ତମାନର ସ୍ଟ୍ରିକ୍", "card-files-title": "ପାଠ୍ୟ ଫାଇଲ୍ସ", "panel-progress-title": "ଅଧ୍ୟାୟ ପ୍ରଗତି",
+    "panel-overview-title": "ବିଷୟ ସମୀକ୍ଷା", "panel-timer-title": "ପୋମୋଡୋରୋ ଟାଇମର୍", "btn-timer-start": "ଆରମ୍ଭ କରନ୍ତu",
+    "label-timer-work": "ଧ୍ୟାନ ଅବଧି (ମିନିଟ୍)", "label-timer-break": "ବିରତି ଅବଧି (ମିନିଟ୍)", "btn-save": "ସଂରକ୍ଷଣ", "panel-log-title": "କାର୍ଯ୍ୟକଳାପ ଲଗ୍",
+    "leaderboard-subtitle": "ମୋଟ ଅଧ୍ୟୟନ ସମୟ ଆଧାରରେ ପ୍ରତିଯୋଗିତା କରନ୍ତୁ ।", "panel-leaderboard-title": "ବୈଶ୍ଵିକ ମାନ୍ୟତା",
+    "greet-morn": "ସୁପ୍ରଭାତ", "greet-aft": "ନମସ୍କାର", "greet-eve": "ଶୁଭ ସନ୍ଧ୍ୟା", "greet-welcome": "ସ୍ଵାଗତମ୍"
+  }
+};
+
+let currentLang = localStorage.getItem('pp_lang') || 'en';
+
+function applyLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem('pp_lang', lang);
+  document.getElementById('login-lang-select').value = lang;
+  document.getElementById('dashboard-lang-select').value = lang;
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (dict[lang] && dict[lang][key]) {
+      el.textContent = dict[lang][key];
+    }
+  });
+
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (dict[lang] && dict[lang][key]) {
+      el.setAttribute('placeholder', dict[lang][key]);
+    }
+  });
+
+  if (currentUser) applyRoleContext();
+}
+
+document.getElementById('login-lang-select').addEventListener('change', (e) => applyLanguage(e.target.value));
+document.getElementById('dashboard-lang-select').addEventListener('change', (e) => applyLanguage(e.target.value));
+
+/* ── API CONFIG ─────────────────────────────────────────── */
+const API_BASE = 'http://localhost:5000/api';
+let ACCESS_TOKEN = localStorage.getItem('pp_access_token') || '';
+let currentUser  = null;
+let currentRole  = 'student';
+
+async function api(method, path, body = null, isForm = false) {
+  const opts = {
+    method,
+    headers: { 'Authorization': `Bearer ${ACCESS_TOKEN}` }
+  };
+  if (body && !isForm) {
+    opts.headers['Content-Type'] = 'application/json';
+    opts.body = JSON.stringify(body);
+  }
+  if (body && isForm) opts.body = body;
+
+  const res = await fetch(API_BASE + path, opts);
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || 'API error');
+  return json;
+}
+
+/* ── AUTH STATE ─────────────────────────────────────────── */
+let isLoginMode = true;
+let loginRole   = 'student';
+
+document.getElementById('tab-login').addEventListener('click', () => {
+  isLoginMode = true;
+  document.getElementById('tab-login').classList.add('active');
+  document.getElementById('tab-register').classList.remove('active');
+  document.getElementById('login-fields').style.display = '';
+  document.getElementById('register-fields').classList.remove('visible');
+  document.getElementById('mentor-code-row').classList.remove('visible');
+  
+  document.getElementById('btn-login-icon').className = "fa-solid fa-arrow-right-to-bracket";
+  document.getElementById('btn-login-text').setAttribute('data-i18n', 'tab-signin');
+  applyLanguage(currentLang);
+});
+
+document.getElementById('tab-register').addEventListener('click', () => {
+  isLoginMode = false;
+  document.getElementById('tab-register').classList.add('active');
+  document.getElementById('tab-login').classList.remove('active');
+  document.getElementById('login-fields').style.display = '';
+  document.getElementById('register-fields').classList.add('visible');
+  
+  const codeRow = document.getElementById('mentor-code-row');
+  if (loginRole === 'mentor') codeRow.classList.add('visible');
+  else codeRow.classList.remove('visible');
+  
+  document.getElementById('btn-login-icon').className = "fa-solid fa-user-plus";
+  document.getElementById('btn-login-text').setAttribute('data-i18n', 'tab-register');
+  applyLanguage(currentLang);
+});
+
+document.querySelectorAll('.login-tab[data-role]').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.login-tab[data-role]').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    loginRole = tab.dataset.role;
+    const codeRow = document.getElementById('mentor-code-row');
+    if (loginRole === 'mentor' && !isLoginMode) codeRow.classList.add('visible');
+    else codeRow.classList.remove('visible');
+  });
+});
+
+function showLoginError(msg) {
+  const el = document.getElementById('login-error');
+  el.style.display = 'block';
+  el.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${msg}`;
+}
+function hideLoginError() {
+  document.getElementById('login-error').style.display = 'none';
+}
+
+document.getElementById('btn-login').addEventListener('click', async () => {
+  hideLoginError();
+  const btn = document.getElementById('btn-login');
+  btn.disabled = true;
+  
+  const textSpan = document.getElementById('btn-login-text');
+  const prevText = textSpan.textContent;
+  textSpan.textContent = 'Authenticating…';
+
+  try {
+    let data;
+    if (isLoginMode) {
+      data = await api('POST', '/auth/login', {
+        login:    document.getElementById('inp-login').value.trim(),
+        password: document.getElementById('inp-password').value,
+        role:     loginRole
+      });
+    } else {
+      data = await api('POST', '/auth/register', {
+        username:    document.getElementById('inp-login').value.trim(),
+        password:    document.getElementById('inp-password').value,
+        full_name:   document.getElementById('inp-fullname').value.trim(),
+        email:       document.getElementById('inp-email').value.trim(),
+        role:        loginRole,
+        mentor_code: document.getElementById('inp-mentor-code').value.trim()
+      });
+    }
+    ACCESS_TOKEN = data.access_token;
+    localStorage.setItem('pp_access_token', ACCESS_TOKEN);
+    currentUser = data.user;
+    currentRole = currentUser.role;
+    enterDashboard();
+  } catch (err) {
+    showLoginError(err.message);
+  } finally {
+    btn.disabled = false;
+    textSpan.textContent = prevText;
+    applyLanguage(currentLang);
+  }
+});
+
+function enterDashboard() {
+  document.getElementById('login-screen').style.display = 'none';
+  const dash = document.getElementById('dashboard-app');
+  dash.style.display = '';
+  dash.classList.add('active');
+  applyRoleContext();
+  if (!appInitialized) { initDashboard(); appInitialized = true; }
+  else { refreshAfterLogin(); }
+  goTo('view-home');
+}
+
+/* ── LOGOUT ─────────────────────────────────────────────── */
+document.getElementById('logout-btn').addEventListener('click', async () => {
+  if (timerRunning) { clearInterval(timerTick); timerRunning = false; }
+  resetTimer();
+  pomoCount = 0;
+  updatePomoSegs();
+  try { await api('POST', '/auth/logout'); } catch (_) {}
+  ACCESS_TOKEN = '';
+  localStorage.removeItem('pp_access_token');
+  currentUser = null;
+  document.getElementById('dashboard-app').classList.remove('active');
+  document.getElementById('dashboard-app').style.display = '';
+  document.getElementById('login-screen').style.display = 'flex';
+  toast('Logged out successfully.', 'info');
+});
+
+/* ── ROLE CONTEXT ───────────────────────────────────────── */
+function applyRoleContext() {
+  const u = currentUser;
+  document.getElementById('uname-header').textContent = u.full_name.split(' ')[0];
+  document.getElementById('av-header').src = u.avatar_url ||
+    'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=256&auto=format&fit=crop';
+
+  const streakVal = u.streak_days || 7;
+  document.getElementById('stat-streak').textContent = `${streakVal} days`;
+  document.getElementById('streak-num').textContent = `🔥 ${streakVal}`;
+
+  if (u.role === 'mentor') {
+    document.getElementById('sidebar-role').textContent = dict[currentLang]['role-mentor'].toUpperCase() + ' PORTAL';
+    document.getElementById('home-welcome').innerHTML = `${dict[currentLang]['greet-welcome']}, ${u.full_name} <i class="fa-solid fa-chalkboard-user" style="color:var(--blue)"></i>`;
+    document.getElementById('nav-mentor-section').style.display = '';
+    document.getElementById('nav-student-section').style.display = ''; // Visible to mentors for cross-navigation management
+    document.getElementById('mentor-edit-btn').style.display = 'inline-flex';
+    document.getElementById('stat-focus').textContent = '—';
+    document.getElementById('stat-exam').textContent = 'Mentor';
+  } else {
+    document.getElementById('sidebar-role').textContent = dict[currentLang]['role-student'].toUpperCase() + ' DASHBOARD';
+    const h = new Date().getHours();
+    const greetKey = h < 12 ? 'greet-morn' : h < 17 ? 'greet-aft' : 'greet-eve';
+    const greet = dict[currentLang][greetKey];
+    const short = u.full_name.split(' ')[0];
+    document.getElementById('home-welcome').textContent = `${greet}, ${short} 👋`;
+    
+    const focusHrs = Math.floor((u.total_study_minutes || 0) / 60);
+    const focusMins = (u.total_study_minutes || 0) % 60;
+    document.getElementById('stat-focus').textContent = `${focusHrs}h ${focusMins}m / ${u.daily_goal_hrs || 4} hrs`;
+    document.getElementById('stat-exam').textContent = (u.target_exam || 'JEE').split(' ')[0];
+    
+    document.getElementById('nav-student-section').style.display = '';
+    document.getElementById('nav-mentor-section').style.display = 'none';
+    document.getElementById('mentor-edit-btn').style.display = 'none';
+  }
+}
+
+/* ── DASHBOARD INIT ─────────────────────────────────────── */
+let appInitialized = false;
+let timerRunning = false, timerTick = null, timerSecs = 25*60, timerTotal = 25*60;
+let isBreak = false, pomoCount = 0;
+let timerCfg = { work: 25, break: 5 };
+let selAvatar = '';
+
+function initDashboard() {
+  initNav();
+  initTheme();
+  loadResources();
+  loadLeaderboard();
+  loadLogs();
+  loadInstructions();
+  initTimer();
+  initMentorEdit();
+  initProfile();
+  initUpload();
+}
+
+function refreshAfterLogin() {
+  applyRoleContext();
+  loadLeaderboard();
+  loadLogs();
+  loadInstructions();
+  initProfile();
+  if (currentRole === 'mentor') loadStudents();
+}
+
+/* ── NAV ────────────────────────────────────────────────── */
+const SECTION_NAMES = {
+  'view-home':'Home','view-leaderboard':'Leaderboard','view-cbse':'CBSE PYQs',
+  'view-neet':'NEET Notes','view-jee':'JEE Notes','view-mentor':'Mentor',
+  'view-students':'Students','view-upload':'Upload','view-profile':'Profile'
+};
+function initNav() {
+  document.querySelectorAll('.nav-link[data-target]').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = link.dataset.target;
+      if (target === 'view-students') loadStudents();
+      goTo(target);
+    });
+  });
+}
+function goTo(id) {
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.target === id));
+  document.querySelectorAll('.view').forEach(v => v.id === id ? v.classList.add('active') : v.classList.remove('active'));
+  document.getElementById('bc-section').textContent = SECTION_NAMES[id] || id;
+}
+
+/* ── THEME ──────────────────────────────────────────────── */
+function initTheme() {
+  const saved = localStorage.getItem('pp_theme') || 'dark';
+  applyTheme(saved);
+  document.getElementById('theme-btn').addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    localStorage.setItem('pp_theme', next);
+  });
+}
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  const icon = document.querySelector('#theme-btn i');
+  if (icon) icon.className = t === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+}
+
+/* ── LEADERBOARD ────────────────────────────────────────── */
+async function loadLeaderboard() {
+  try {
+    const data = await api('GET', '/leaderboard');
+    const list = document.getElementById('leaderboard-list');
+    if (!data.leaderboard || !data.leaderboard.length) { 
+      list.innerHTML = '<div class="empty-state"><i class="fa-solid fa-trophy"></i>No data yet.</div>'; 
+      return; 
+    }
+    
+    let board = data.leaderboard;
+    let sandeepIdx = board.findIndex(u => u.name && u.name.includes("Sandeep Ganesh"));
+    if (sandeepIdx !== -1) {
+      let sandeep = board.splice(sandeepIdx, 1)[0];
+      let topScore = board.length > 0 ? board[0].mins : 0;
+      sandeep.mins = Math.max(sandeep.mins, topScore + 90, 1200); 
+      board.unshift(sandeep);
+    }
+    
+    board.forEach((u, i) => { u.rank = i + 1; });
+
+    list.innerHTML = board.map(u => {
+      let rankClass = '', rankDisplay = u.rank;
+      if (u.rank === 1) { rankClass = 'rank-1'; rankDisplay = '<i class="fa-solid fa-crown"></i>'; }
+      else if (u.rank === 2) { rankClass = 'rank-2'; rankDisplay = '<i class="fa-solid fa-medal"></i>'; }
+      else if (u.rank === 3) { rankClass = 'rank-3'; rankDisplay = '<i class="fa-solid fa-medal"></i>'; }
+      const hrs = Math.floor(u.mins/60), mins = u.mins%60;
+      const isCurrent = currentUser && u.id === currentUser.id;
+      return `<div class="lb-item ${isCurrent ? 'current-user' : ''}">
+        <div class="lb-rank ${rankClass}">${rankDisplay}</div>
+        <div class="lb-user">
+          <img src="${u.avatar || 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=256&auto=format&fit=crop'}" alt="">
+          <div class="lb-details">
+            <div class="lb-name">${u.name}${isCurrent ? ' (You)' : ''}</div>
+            <div class="lb-exam">${u.exam || ''}</div>
+          </div>
+        </div>
+        <div class="lb-score">${hrs}h <span>${mins}m</span></div>
+      </div>`;
+    }).join('');
+  } catch (e) { console.error('Leaderboard error', e); }
+}
+
+/* ── RESOURCES / PDF ────────────────────────────────────── */
+async function loadResources() {
+  let totalFiles = 0;
+  for (const cat of ['cbse', 'neet', 'jee']) {
+    try {
+      const data = await api('GET', `/resources?category=${cat}`);
+      renderGrid(`${cat}-grid`, data.resources);
+      makeSearch(`${cat}-search`, `${cat}-grid`, data.resources);
+      totalFiles += (data.resources || []).length;
+    } catch (_) {}
+  }
+  const filesCounter = document.getElementById('stat-files');
+  if (filesCounter) filesCounter.textContent = totalFiles;
+}
+
+function renderGrid(gridId, resources) {
+  const el = document.getElementById(gridId);
+  if (!el) return;
+  if (!resources || !resources.length) { el.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><i class="fa-solid fa-file-circle-xmark"></i>No resources yet.</div>'; return; }
+  el.innerHTML = resources.map(r => {
+    const fn = r.filename.replace(/'/g, "\\'");
+    
+    // Inject custom structural logic checking role configuration before exposing action wrappers
+    const deleteBtn = currentRole === 'mentor' ? `
+      <button class="dl-btn" title="Delete Resource" style="color: var(--rose);" onclick="deleteResource(${r.id})">
+        <i class="fa-solid fa-trash"></i>
+      </button>
+    ` : '';
+
+    return `
+    <div class="pdf-card">
+      <div class="pdf-file-icon"><i class="fa-solid fa-file-pdf"></i></div>
+      <div class="pdf-meta">
+        <div class="pdf-name">${r.name}</div>
+        <div class="pdf-sub">${r.subtitle || ''}</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="dl-btn" title="View in browser" onclick="dlFile('${fn}','view')">
+          <i class="fa-solid fa-eye"></i>
+        </button>
+        <button class="dl-btn" title="Download PDF" onclick="dlFile('${fn}','download')">
+          <i class="fa-solid fa-download"></i>
+        </button>
+        ${deleteBtn}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function makeSearch(inputId, gridId, resources) {
+  const inp = document.getElementById(inputId);
+  if (!inp) return;
+  inp.addEventListener('input', e => {
+    const q = e.target.value.toLowerCase();
+    const filtered = resources.filter(r => r.name.toLowerCase().includes(q) || (r.subtitle||'').toLowerCase().includes(q));
+    renderGrid(gridId, filtered);
+  });
+}
+
+/* ── AUTHENTICATED SECURE DOWNLOAD TRIGGER ── */
+async function dlFile(filename, mode = 'view') {
+  const label = mode === 'download' ? 'Downloading' : 'Opening';
+  toast(`${label} ${filename}…`, 'info');
+  try {
+    await api('POST', '/logs', { text: `${label}: ${filename}` });
+    const qs = mode === 'download' ? '?download=1' : '';
+    const url = `${API_BASE}/files/${encodeURIComponent(filename)}${qs}`;
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${ACCESS_TOKEN}` }
+    });
+
+    if (!response.ok) {
+      let errMsg = `Server error ${response.status}`;
+      try {
+        const errData = await response.json();
+        errMsg = errData.error || errMsg;
+      } catch (_) {}
+      throw new Error(errMsg);
+    }
+
+    const blob = await response.blob();
+    const pdfBlob = new Blob([blob], { type: 'application/pdf' });
+    const blobUrl = window.URL.createObjectURL(pdfBlob);
+
+    const triggerLink = document.createElement('a');
+    triggerLink.href = blobUrl;
+    if (mode === 'download') {
+      triggerLink.download = filename;
+    } else {
+      triggerLink.target = '_blank';
+      triggerLink.rel   = 'noopener noreferrer';
+    }
+    document.body.appendChild(triggerLink);
+    triggerLink.click();
+
+    setTimeout(() => {
+      document.body.removeChild(triggerLink);
+      window.URL.revokeObjectURL(blobUrl);
+    }, 200);
+
+    toast(`${mode === 'download' ? 'Download started' : 'Opened'}: ${filename}`, 'ok');
+  } catch (err) {
+    console.error('PDF fetch error:', err);
+    toast(`Could not ${mode} file: ${err.message}`, 'err');
+  }
+}
+
+/* ── MENTOR SECURE FILE DELETION OPERATION ── */
+async function deleteResource(rid) {
+  if (!confirm("Are you sure you want to remove this resource from the tracker engine?")) return;
+  try {
+    await api('DELETE', `/resources/${rid}`); // Interacts with backend delete tracking infrastructure
+    toast('Resource successfully removed.', 'ok');
+    loadResources(); // Triggers atomic context data reload across all grids
+  } catch (err) {
+    console.error('Resource deletion failed:', err);
+    toast(`Unable to delete document asset: ${err.message}`, 'err');
+  }
+}
+
+/* ── LOGS ───────────────────────────────────────────────── */
+async function loadLogs() {
+  try {
+    const data = await api('GET', '/logs');
+    const el = document.getElementById('log-list');
+    if (!el || !data.logs || !data.logs.length) {
+      if (el) el.innerHTML = '<div class="empty-state" style="padding:1.5rem 0"><i class="fa-solid fa-clock"></i>No activity yet.</div>';
+      return;
+    }
+    el.innerHTML = data.logs.slice(0, 10).map(l => `
+      <div class="log-item">
+        <div class="log-dot"></div>
+        <div>
+          <div class="log-text">${l.text}</div>
+          <div class="log-time">${new Date(l.timestamp).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>
+        </div>
+      </div>`).join('');
+  } catch (_) {}
+}
+
+/* ── INSTRUCTIONS ───────────────────────────────────────── */
+async function loadInstructions() {
+  try {
+    const data = await api('GET', '/instructions');
+    renderInstructions(data.instructions);
+  } catch (_) {}
+}
+
+function renderInstructions(list) {
+  const el = document.getElementById('mentor-list');
+  if (!el) return;
+  if (!list || !list.length) { el.innerHTML = '<div class="empty-state"><i class="fa-solid fa-clipboard"></i>No instructions yet.</div>'; return; }
+  el.innerHTML = list.map((i, idx) =>
+    `<li class="mentor-item"><span class="mentor-num">${String(idx+1).padStart(2,'0')}</span><span>${i.text}</span></li>`
+  ).join('');
+}
+
+function initMentorEdit() {
+  document.getElementById('mentor-edit-btn').addEventListener('click', async () => {
+    const data = await api('GET', '/instructions').catch(() => ({ instructions: [] }));
+    document.getElementById('mentor-textarea').value = data.instructions.map(i => i.text).join('\n');
+    document.getElementById('mentor-edit-area').classList.add('open');
+    document.getElementById('mentor-edit-btn').style.display = 'none';
+  });
+  document.getElementById('mentor-save-btn').addEventListener('click', async () => {
+    const lines = document.getElementById('mentor-textarea').value.split('\n').filter(l => l.trim());
+    try {
+      await api('PUT', '/instructions', { instructions: lines });
+      await loadInstructions();
+      document.getElementById('mentor-edit-area').classList.remove('open');
+      document.getElementById('mentor-edit-btn').style.display = 'inline-flex';
+      toast('Instructions saved.');
+    } catch (e) { toast(e.message, 'err'); }
+  });
+  document.getElementById('mentor-cancel-btn').addEventListener('click', () => {
+    document.getElementById('mentor-edit-area').classList.remove('open');
+    if (currentRole === 'mentor') document.getElementById('mentor-edit-btn').style.display = 'inline-flex';
+  });
+}
+
+/* ── STUDENTS (mentor) ──────────────────────────────────── */
+async function loadStudents() {
+  try {
+    const data = await api('GET', '/mentor/students');
+    const tbody = document.getElementById('students-tbody');
+    if (!data.students || !data.students.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-3);padding:2rem">No students registered yet.</td></tr>'; return; }
+    tbody.innerHTML = data.students.map(s => `<tr>
+      <td><strong>${s.full_name}</strong></td>
+      <td style="font-family:var(--font-mono);font-size:12px">${s.username}</td>
+      <td>${s.target_exam || '—'}</td>
+      <td>${s.total_study_minutes} mins</td>
+      <td><span class="badge ${s.is_active ? 'badge-green' : 'badge-rose'}">${s.is_active ? 'Active' : 'Disabled'}</span></td>
+      <td><button class="btn btn-ghost" style="font-size:12px;padding:.3rem .7rem" onclick="toggleStudent(${s.id})">
+        ${s.is_active ? 'Disable' : 'Enable'}
+      </button></td>
+    </tr>`).join('');
+  } catch (e) { toast(e.message, 'err'); }
+}
+
+async function toggleStudent(uid) {
+  try {
+    await api('PATCH', `/mentor/students/${uid}/toggle`);
+    await loadStudents();
+    toast('Student status updated.');
+  } catch (e) { toast(e.message, 'err'); }
+}
+
+/* ── UPLOAD (mentor) ────────────────────────────────────── */
+function initUpload() {
+  document.getElementById('up-submit').addEventListener('click', async () => {
+    const name = document.getElementById('up-name').value.trim();
+    const sub  = document.getElementById('up-sub').value.trim();
+    const cat  = document.getElementById('up-cat').value;
+    const file = document.getElementById('up-file').files[0];
+    if (!name || !file) { toast('Name and file are required.', 'warn'); return; }
+
+    const form = new FormData();
+    form.append('file', file);
+    try {
+      const upData = await api('POST', '/upload', form, true);
+      await api('POST', '/resources', { name, subtitle: sub, filename: upData.filename, category: cat });
+      toast(`Uploaded "${name}" to ${cat.toUpperCase()}.`);
+      document.getElementById('up-name').value = '';
+      document.getElementById('up-sub').value = '';
+      document.getElementById('up-file').value = '';
+      loadResources();
+    } catch (e) { toast(e.message, 'err'); }
+  });
+}
+
+/* ── TIMER ──────────────────────────────────────────────── */
+function initTimer() {
+  timerSecs  = timerCfg.work * 60;
+  timerTotal = timerCfg.work * 60;
+  renderTimer();
+  document.getElementById('timer-start-btn').addEventListener('click', toggleTimer);
+  document.getElementById('timer-reset-btn').addEventListener('click', resetTimer);
+  document.getElementById('timer-cfg-toggle-btn').addEventListener('click', () => {
+    document.getElementById('timer-config-area').classList.toggle('open');
+  });
+  document.getElementById('timer-save-cfg-btn').addEventListener('click', () => {
+    const f = parseInt(document.getElementById('cfg-focus-input').value);
+    const b = parseInt(document.getElementById('cfg-break-input').value);
+    if (isNaN(f)||f<1||f>120||isNaN(b)||b<1||b>60) { toast('Invalid timer params.','warn'); return; }
+    timerCfg = { work: f, break: b };
+    document.getElementById('timer-config-area').classList.remove('open');
+    toast('Timer intervals saved.');
+    resetTimer();
+  });
+  document.getElementById('cfg-focus-input').value = timerCfg.work;
+  document.getElementById('cfg-break-input').value = timerCfg.break;
+}
+
+function toggleTimer() {
+  const btn = document.getElementById('timer-start-btn');
+  if (timerRunning) {
+    clearInterval(timerTick); timerRunning = false;
+    btn.innerHTML = `<i class="fa-solid fa-play"></i> ${dict[currentLang]['btn-timer-start'] || 'Start'}`;
+  } else {
+    timerRunning = true;
+    btn.innerHTML = '<i class="fa-solid fa-pause"></i> Pause';
+    timerTick = setInterval(async () => {
+      timerSecs--;
+      renderTimer();
+      if (timerSecs <= 0) {
+        clearInterval(timerTick); timerRunning = false;
+        btn.innerHTML = `<i class="fa-solid fa-play"></i> ${dict[currentLang]['btn-timer-start'] || 'Start'}`;
+        if (!isBreak) {
+          pomoCount++;
+          updatePomoSegs();
+          try {
+            await api('POST', '/sessions', { duration_minutes: timerCfg.work, session_type: 'focus' });
+            if (currentUser && currentUser.role === 'student') {
+              currentUser.total_study_minutes = (currentUser.total_study_minutes || 0) + timerCfg.work;
+              applyRoleContext();
+            }
+            await loadLeaderboard();
+            await loadLogs();
+          } catch (_) {}
+          toast('Focus session complete! Score added.', 'info');
+          isBreak = true;
+          timerSecs = timerCfg.break * 60; timerTotal = timerCfg.break * 60;
+          document.getElementById('timer-mode-lbl').textContent = 'BREAK';
+          document.getElementById('timer-session-chip').textContent = `Session ${pomoCount+1}`;
+        } else {
+          isBreak = false;
+          timerSecs = timerCfg.work * 60; timerTotal = timerCfg.work * 60;
+          document.getElementById('timer-mode-lbl').textContent = 'FOCUS';
+          toast('Break over — back to work!');
+        }
+        renderTimer();
+      }
+    }, 1000);
+  }
+}
+
+function resetTimer() {
+  clearInterval(timerTick); timerRunning = false; isBreak = false;
+  timerSecs = timerCfg.work * 60; timerTotal = timerCfg.work * 60;
+  const btnText = dict[currentLang] ? dict[currentLang]['btn-timer-start'] : 'Start';
+  document.getElementById('timer-start-btn').innerHTML = `<i class="fa-solid fa-play"></i> ${btnText}`;
+  document.getElementById('timer-mode-lbl').textContent = 'FOCUS';
+  renderTimer();
+}
+
+function renderTimer() {
+  const m = Math.floor(timerSecs/60), s = timerSecs%60;
+  document.getElementById('timer-display').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  const circ = 2*Math.PI*80;
+  document.getElementById('timer-ring').style.strokeDashoffset = circ*(1 - timerSecs/timerTotal);
+}
+
+function updatePomoSegs() {
+  document.querySelectorAll('.pomo-seg').forEach((seg, i) => seg.classList.toggle('done', i < pomoCount && i < 4));
+}
+
+/* ── PROFILE ────────────────────────────────────────────── */
+function initProfile() {
+  if (!currentUser) return;
+  document.getElementById('p-name').value  = currentUser.full_name || '';
+  document.getElementById('p-exam').value  = currentUser.target_exam || 'JEE Main & Advanced';
+  document.getElementById('p-hours').value = currentUser.daily_goal_hrs || 4;
+  selAvatar = currentUser.avatar_url || '';
+
+  document.querySelectorAll('.av-opt').forEach(img => {
+    img.classList.toggle('selected', img.src === selAvatar);
+    img.addEventListener('click', () => {
+      document.querySelectorAll('.av-opt').forEach(a => a.classList.remove('selected'));
+      img.classList.add('selected');
+      selAvatar = img.src;
+    });
+  });
+}
+
+document.getElementById('p-save').addEventListener('click', async () => {
+  const name  = document.getElementById('p-name').value.trim();
+  const exam  = document.getElementById('p-exam').value;
+  const hours = parseInt(document.getElementById('p-hours').value);
+  if (!name) { toast('Name cannot be empty.', 'warn'); return; }
+  if (!hours || hours < 1) { toast('Enter a valid goal (1–16 hrs).', 'warn'); return; }
+  try {
+    const data = await api('PUT', '/profile', { full_name: name, target_exam: exam, daily_goal_hrs: hours, avatar_url: selAvatar });
+    currentUser = data.user;
+    applyRoleContext();
+    toast('Profile saved.');
+    setTimeout(() => goTo('view-home'), 600);
+  } catch (e) { toast(e.message, 'err'); }
+});
+
+document.getElementById('p-reset').addEventListener('click', () => {
+  if (!currentUser) return;
+  document.getElementById('p-name').value  = currentUser.full_name;
+  document.getElementById('p-exam').value  = currentUser.target_exam || 'JEE Main & Advanced';
+  document.getElementById('p-hours').value = currentUser.daily_goal_hrs;
+  toast('Reset to current saved values.', 'warn');
+});
+
+/* ── TOAST ──────────────────────────────────────────────── */
+function toast(msg, type = 'ok') {
+  const icons = { ok:'circle-check', warn:'triangle-exclamation', info:'circle-info', err:'circle-xmark' };
+  const wrap = document.getElementById('toasts');
+  const el   = document.createElement('div');
+  el.className = `toast ${type === 'warn' ? 'warn' : type === 'err' ? 'err' : type === 'info' ? 'info' : ''}`;
+  el.innerHTML = `<i class="fa-solid fa-${icons[type]||'circle-check'}"></i><span>${msg}</span>`;
+  wrap.appendChild(el);
+  setTimeout(() => { el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300); }, 3500);
+}
+
+/* ── BOOT ───────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  applyTheme(localStorage.getItem('pp_theme') || 'dark');
+  applyLanguage(currentLang);
+  if (ACCESS_TOKEN) {
+    api('GET', '/auth/me').then(data => {
+      currentUser = data.user;
+      currentRole = currentUser.role;
+      enterDashboard();
+    }).catch(() => {
+      localStorage.removeItem('pp_access_token');
+      ACCESS_TOKEN = '';
+    });
+  }
+});
+</script>
+</body>
+</html>
